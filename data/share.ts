@@ -38,6 +38,6 @@ export function decodeScores(encoded: string): UserScores | null {
 export function buildShareUrl(scores: UserScores, origin?: string): string {
   const base =
     origin ??
-    (typeof window !== "undefined" ? window.location.origin : "https://simulacras-novas.vercel.app")
+    (typeof window !== "undefined" ? window.location.origin : "https://simulacras-novas.com")
   return `${base}/?s=${encodeScores(scores)}`
 }

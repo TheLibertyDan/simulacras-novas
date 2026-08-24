@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const SITE_URL = "https://simulacras-novas.vercel.app";
+const SITE_URL = "https://simulacras-novas.com";
 const TITLE = "Simulacras Novas — The world's deepest political compass";
 const DESCRIPTION =
   "Not left vs right. Simulacras Novas plots you on eight philosophical axes about what politics actually IS — truth, human nature, the nature of politics, scope, unit, order, authority, and the arc of history. 55 historical thinkers to compare against. Take the test.";
