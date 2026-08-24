@@ -24,8 +24,14 @@ export function encodeScores(scores: UserScores): string {
 }
 
 export function decodeScores(encoded: string): UserScores | null {
-  const parts = encoded.split(",").map((s) => Number(s.trim()))
-  if (parts.length !== AXIS_ORDER_FOR_SHARE.length) return null
+  // Extract the first 8 integers (optionally negative) from the string,
+  // ignoring any trailing garbage. iOS's native share sheet sometimes
+  // concatenates share text into the URL when "Copy" is chosen, so a
+  // pasted link can look like `?s=7,-8,10,-1,5,-6,4,-3 My result — ...`
+  // — we still want to succeed.
+  const matches = encoded.match(/-?\d+/g)
+  if (!matches || matches.length < AXIS_ORDER_FOR_SHARE.length) return null
+  const parts = matches.slice(0, AXIS_ORDER_FOR_SHARE.length).map(Number)
   if (parts.some((n) => !Number.isFinite(n) || n < -10 || n > 10)) return null
   const out: Partial<UserScores> = {}
   AXIS_ORDER_FOR_SHARE.forEach((k, i) => {

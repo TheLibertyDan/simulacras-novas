@@ -22,7 +22,10 @@ export default function ShareButton({ scores }: ShareButtonProps) {
 
   const url = buildShareUrl(scores)
   const label = shortLabel(scores)
-  const text = `My Simulacras Novas result — ${label}. Take the world's deepest political compass:`
+  // Keep `text` short and DO NOT include the URL — some share targets
+  // (notably iOS "Copy" from the native share sheet) concatenate
+  // text + url into one clipboard string, which corrupts pasted links.
+  const text = `My Simulacras Novas result — ${label}. Take yours:`
 
   useEffect(() => {
     if (typeof navigator !== "undefined" && "share" in navigator) {
