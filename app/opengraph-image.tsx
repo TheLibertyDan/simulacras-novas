@@ -137,7 +137,7 @@ export default function OpenGraphImage() {
               display: "flex",
             }}
           >
-            simulacras-novas.vercel.app
+            simulacras-novas.com
           </div>
         </div>
       </div>
