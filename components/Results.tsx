@@ -10,6 +10,7 @@ import { composeDescriptor, shortLabel } from "@/data/descriptor"
 import ProfileCard, { Portrait } from "./ProfileCard"
 import AxisInfo from "./AxisInfo"
 import ShareButton from "./ShareButton"
+import CompareModal from "./CompareModal"
 
 interface ResultsProps {
   scores: UserScores
@@ -31,6 +32,7 @@ export default function Results({
 }: ResultsProps) {
   const [openProfile, setOpenProfile] = useState<string | null>(null)
   const [openAxisInfo, setOpenAxisInfo] = useState<AxisKey | null>(null)
+  const [openCompare, setOpenCompare] = useState(false)
 
   const profileNames = useMemo(() => new Set(profiles.map((p) => p.name)), [])
   const comparableThinkers = thinkers.filter((t) => profileNames.has(t.name))
@@ -123,10 +125,34 @@ export default function Results({
           </div>
         </div>
 
-        {/* Share button — prominent, right under descriptor */}
+        {/* Share + Compare — prominent, right under descriptor */}
         {!isShared && (
-          <div className="flex justify-center mb-6 md:mb-8">
+          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-center gap-3 mb-6 md:mb-8">
             <ShareButton scores={scores} />
+            <button
+              onClick={() => setOpenCompare(true)}
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-100 font-mono font-bold cursor-pointer shadow-xl transition-colors text-sm md:text-base border border-slate-700"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden
+              >
+                <path d="M17 3a2.85 2.85 0 1 1 0 5.7A2.85 2.85 0 0 1 17 3z" />
+                <path d="M7 3a2.85 2.85 0 1 1 0 5.7A2.85 2.85 0 0 1 7 3z" />
+                <path d="M12 21a2.85 2.85 0 1 1 0-5.7 2.85 2.85 0 0 1 0 5.7z" />
+                <path d="M9.5 6.5l5 8" />
+                <path d="M14.5 6.5l-5 8" />
+              </svg>
+              Compare to a friend
+            </button>
           </div>
         )}
 
@@ -294,6 +320,10 @@ export default function Results({
 
       {openAxisInfo && (
         <AxisInfo axis={openAxisInfo} onClose={() => setOpenAxisInfo(null)} />
+      )}
+
+      {openCompare && (
+        <CompareModal yourScores={scores} onClose={() => setOpenCompare(false)} />
       )}
     </div>
   )
