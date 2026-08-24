@@ -154,7 +154,7 @@ export default function Results({
                 <div key={axisKey} className="flex items-center gap-3">
                   <button
                     onClick={() => setOpenAxisInfo(axisKey)}
-                    className="w-32 flex-shrink-0 text-left cursor-pointer group"
+                    className="w-36 flex-shrink-0 text-left cursor-pointer group"
                     title={`What is ${axis.name}?`}
                   >
                     <div
@@ -163,8 +163,8 @@ export default function Results({
                     >
                       {axis.name}
                     </div>
-                    <div className="text-[9px] font-mono text-slate-600 group-hover:text-slate-400 mt-0.5">
-                      {axis.technicalName} · click
+                    <div className="text-[9px] font-mono text-slate-600 group-hover:text-slate-400 mt-0.5 italic">
+                      ({axis.technicalName})
                     </div>
                   </button>
                   <div className="flex-1 relative h-2 bg-slate-800 rounded-full">

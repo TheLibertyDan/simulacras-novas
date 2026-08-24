@@ -50,11 +50,11 @@ export default function AxisInfo({ axis, onClose }: AxisInfoProps) {
           />
           <div className="flex-1 min-w-0">
             <h2 className="text-xl font-bold" style={{ color: def.color }}>
-              {def.name}
+              {def.name}{" "}
+              <span className="text-sm font-normal italic opacity-70">
+                ({def.technicalName})
+              </span>
             </h2>
-            <p className="text-xs text-slate-500 font-mono mt-0.5 italic">
-              academic term: {def.technicalName}
-            </p>
           </div>
           <button
             type="button"

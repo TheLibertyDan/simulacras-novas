@@ -174,13 +174,15 @@ export default function ProfileCard({ profile, scores, onClose }: ProfileCardPro
               const scoreStr = score > 0 ? `+${score}` : `${score}`
               return (
                 <div key={axisKey} className="flex gap-3">
-                  <div className="flex-shrink-0 w-28 pt-0.5">
+                  <div className="flex-shrink-0 w-32 pt-0.5">
                     <div
-                      className="text-xs font-bold tracking-tight"
+                      className="text-xs font-bold tracking-tight leading-tight"
                       style={{ color: axis.color }}
-                      title={axis.technicalName}
                     >
                       {axis.name}
+                    </div>
+                    <div className="text-[9px] font-mono text-slate-500 italic mt-0.5">
+                      ({axis.technicalName})
                     </div>
                     <div className="text-[10px] font-mono text-slate-500 mt-0.5">
                       {scoreStr}

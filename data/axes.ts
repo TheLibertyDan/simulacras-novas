@@ -12,7 +12,7 @@ export type AxisDef = {
   key: AxisKey
   /** Public-facing friendly name — used in UI everywhere except chart labels. */
   name: string
-  /** Academic term — shown in glossary + as subtitle in profile modal. */
+  /** Academic -ology term — shown as "(Sociology)" style badge next to friendly name. */
   technicalName: string
   /** Tight abbreviation for 3D chart labels. */
   short: string
@@ -29,14 +29,12 @@ export type AxisDef = {
 }
 
 /**
- * The 8-axis system. Two foundational (pre-political) axes, one
- * foundational-political axis, four derived political axes, one
- * theory-of-history axis. See `Bedrock Political Compass.md` in the
- * vault for the reasoning.
+ * The 8-axis system. Every axis has a friendly name + a scientific -ology
+ * name (like a natural-science study of politics — Hobbes's vision), plus
+ * clean single-word antithesis poles. See `Bedrock Political Compass.md`
+ * in the vault for reasoning.
  *
  * Positive score = the "posLabel" pole. Negative = "negLabel". 0 = neutral.
- * `name` is the reader-friendly label; `technicalName` is the academic term
- * for the glossary.
  */
 export const AXES: Record<AxisKey, AxisDef> = {
   epistemology: {
@@ -45,8 +43,8 @@ export const AXES: Record<AxisKey, AxisDef> = {
     technicalName: "Epistemology",
     short: "Truth",
     color: "#f43f5e",
-    posLabel: "Discovered",
-    negLabel: "Made",
+    posLabel: "Objective",
+    negLabel: "Relative",
     question:
       "Is political truth mind-independent and discoverable, or is it constructed by human activity and perspective?",
     posDescription:
@@ -61,8 +59,8 @@ export const AXES: Record<AxisKey, AxisDef> = {
     technicalName: "Anthropology",
     short: "Human",
     color: "#22c55e",
-    posLabel: "Good",
-    negLabel: "Evil",
+    posLabel: "Naturally good",
+    negLabel: "Naturally evil",
     question: "Are humans naturally good, or naturally evil?",
     posDescription:
       "You see people as basically good, cooperative, and decent when institutions and conditions permit it — the Rousseau / Marx / Locke lineage. Bad behavior comes from bad systems, not bad nature.",
@@ -72,12 +70,12 @@ export const AXES: Record<AxisKey, AxisDef> = {
   },
   politicalOntology: {
     key: "politicalOntology",
-    name: "What Politics Is",
-    technicalName: "Political Ontology",
+    name: "The Nature of Politics",
+    technicalName: "Ontology",
     short: "Politics",
     color: "#3b82f6",
-    posLabel: "Power",
-    negLabel: "Ethics",
+    posLabel: "Realist",
+    negLabel: "Moralist",
     question:
       "Does politics have its own irreducible logic, or does it derive from something more fundamental (morality, economics, culture, divine order)?",
     posDescription:
@@ -89,11 +87,11 @@ export const AXES: Record<AxisKey, AxisDef> = {
   universalism: {
     key: "universalism",
     name: "Us or Everyone",
-    technicalName: "Universalism ↔ Particularism",
+    technicalName: "Ethnology",
     short: "Scope",
     color: "#a855f7",
-    posLabel: "Everyone",
-    negLabel: "Us",
+    posLabel: "Universalist",
+    negLabel: "Particularist",
     question:
       "One humanity and one truth for all, or particular peoples with particular traditions?",
     posDescription:
@@ -104,27 +102,27 @@ export const AXES: Record<AxisKey, AxisDef> = {
   },
   individualism: {
     key: "individualism",
-    name: "Person or Group",
-    technicalName: "Individual ↔ Collective",
+    name: "The Political Unit",
+    technicalName: "Sociology",
     short: "Unit",
     color: "#f97316",
-    posLabel: "Person",
-    negLabel: "Group",
-    question: "Whose flourishing is politics for — persons or peoples?",
+    posLabel: "Individual",
+    negLabel: "Community",
+    question: "Whose flourishing is politics for — persons or communities?",
     posDescription:
       "You believe the individual person is the fundamental unit of political concern. Rights belong to individuals; groups have interests, but only persons have moral standing. Locke, Rothbard, Mill.",
     negDescription:
-      "You believe the collective — the class, the nation, the community, the people — is a real political agent with real needs and a real will. Individualism, taken far, hollows out the bonds people need. Rousseau, Marx, Burke.",
+      "You believe the community — the family, the church, the nation, the tradition — is a real political agent with real needs and a real claim on its members. Individualism, taken far, hollows out the bonds people need. Burke, Rousseau, Marx.",
     layer: "political",
   },
   order: {
     key: "order",
     name: "Order",
-    technicalName: "Order Formation",
+    technicalName: "Ecology",
     short: "Order",
     color: "#06b6d4",
     posLabel: "Designed",
-    negLabel: "Grown",
+    negLabel: "Emergent",
     question:
       "Can legitimate order be designed from first principles, or must it accumulate organically?",
     posDescription:
@@ -135,12 +133,12 @@ export const AXES: Record<AxisKey, AxisDef> = {
   },
   authority: {
     key: "authority",
-    name: "Who Rules",
-    technicalName: "Authority",
+    name: "Authority",
+    technicalName: "Kratology",
     short: "Auth",
     color: "#eab308",
-    posLabel: "The Few",
-    negLabel: "The Many",
+    posLabel: "The Elite",
+    negLabel: "The People",
     question: "Who legitimately rules — the many or the organized few?",
     posDescription:
       "You believe political decisions require expertise, discipline, or cadre training the disorganized many lack. Every stable regime is really run by an organized minority. Machiavelli, Yarvin, Lenin, the Italian School.",
@@ -150,8 +148,8 @@ export const AXES: Record<AxisKey, AxisDef> = {
   },
   temporal: {
     key: "temporal",
-    name: "History's Arc",
-    technicalName: "Temporal Orientation",
+    name: "The Arc of Time",
+    technicalName: "Historiology",
     short: "Arc",
     color: "#ec4899",
     posLabel: "Progress",
