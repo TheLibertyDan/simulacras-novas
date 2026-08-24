@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Bedrock Political Compass
 
-## Getting Started
+A new political compass. Not the standard 4-square (economic × authoritarian
+— trapped in modern Western liberal-democratic assumptions). Instead: a 3D
+map of philosophical commitments about politics itself, on three bedrock
+axes.
 
-First, run the development server:
+Design and background: see `Bedrock Political Compass.md` in the Obsidian
+vault, plus `Realist Lineage — Machiavelli to Rothfeld.md` and
+`Political Philosophy — Comparative Map.md` in `Research/Political Theory/`.
+
+## The three bedrock axes
+
+- **X — Epistemology** (Veritas): concrete/knowable truth ↔ relative/constructed truth
+- **Y — Anthropology** (Human nature): naturally good ↔ naturally evil
+- **Z — Political Ontology**: politics as its own autonomous domain (realist) ↔ politics as reducible to something else (moralism, materialism, culturalism, theocracy)
+
+Each axis runs −10 to +10. Every historical thinker has a coordinate on
+each; **coordinates are hypotheses**, drafted from primary text and
+secondary reading, and are meant to be argued over. Move any point that
+looks wrong.
+
+## v0 (current)
+
+- 3D interactive chart, rotate/zoom/pan
+- 19 canonical thinkers plotted
+- Hover a point for a detail panel with reasoning
+- Daniel's observed position highlighted
+
+## v1 (next)
+
+- 30-question assessment (5 per axis × 6 axes for ground truth)
+- User's own position plotted
+- Nearest-thinkers list (computed in full 6-space, not 3-projection)
+- Radar chart companion view for all 6 axes
+- Perspective switching between axis triples (e.g. Individual/Collective as an alternate Y)
+
+## Stack
+
+- Next.js 16 (App Router, Turbopack)
+- React Three Fiber + Drei for the 3D scene
+- Tailwind for UI
+- Static JSON (`data/thinkers.ts`) for reference positions; no backend
+
+## Run
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Editing thinker positions
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+All coordinates live in `data/thinkers.ts`. Every entry has:
 
-## Learn More
+- `name`
+- `epistemology` (−10 to +10)
+- `anthropology` (−10 to +10)
+- `politicalOntology` (−10 to +10)
+- `note` (short reasoning for the placement — shown on hover)
+- optional `color` and `isSelf` for highlighting
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Argue with placements by editing that file. Refresh; changes hot-reload.
