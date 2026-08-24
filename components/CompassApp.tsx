@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
+import { createPortal } from "react-dom"
 import { useSearchParams } from "next/navigation"
 import Compass from "./Compass"
 import AxisPicker from "./AxisPicker"
@@ -35,6 +36,11 @@ export default function CompassApp() {
   const [openProfile, setOpenProfile] = useState<string | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [isShared, setIsShared] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // On landing: if URL has `?s=...`, decode and jump straight to Results.
   useEffect(() => {
@@ -200,32 +206,37 @@ export default function CompassApp() {
         {controls}
       </div>
 
-      {/* Mobile drawer — full-height overlay from right */}
-      {menuOpen && (
-        <div
-          className="md:hidden fixed inset-0 z-30 bg-slate-950/60 backdrop-blur-sm"
-          onClick={() => setMenuOpen(false)}
-        >
+      {/* Mobile drawer — portal to body + max z-index so R3F Html labels
+          (which portal to body themselves) can't stack above us. */}
+      {menuOpen &&
+        mounted &&
+        createPortal(
           <div
-            className="absolute right-0 top-0 h-full w-[85vw] max-w-[360px] bg-slate-950 border-l border-slate-800 shadow-2xl overflow-y-auto p-4"
-            onClick={(e) => e.stopPropagation()}
+            className="md:hidden fixed inset-0 bg-slate-950/95 backdrop-blur-sm"
+            style={{ zIndex: 2147483647 }}
+            onClick={() => setMenuOpen(false)}
           >
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-xs font-mono uppercase tracking-widest text-slate-500">
-                Controls
-              </span>
-              <button
-                onClick={() => setMenuOpen(false)}
-                className="w-8 h-8 flex items-center justify-center rounded hover:bg-slate-800 text-slate-400 hover:text-white text-2xl leading-none cursor-pointer"
-                aria-label="Close menu"
-              >
-                ×
-              </button>
+            <div
+              className="absolute right-0 top-0 h-full w-[85vw] max-w-[360px] bg-slate-950 border-l border-slate-800 shadow-2xl overflow-y-auto p-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-xs font-mono uppercase tracking-widest text-slate-500">
+                  Controls
+                </span>
+                <button
+                  onClick={() => setMenuOpen(false)}
+                  className="w-8 h-8 flex items-center justify-center rounded hover:bg-slate-800 text-slate-400 hover:text-white text-2xl leading-none cursor-pointer"
+                  aria-label="Close menu"
+                >
+                  ×
+                </button>
+              </div>
+              {controls}
             </div>
-            {controls}
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body,
+        )}
 
       <footer className="hidden md:block absolute bottom-4 left-6 z-10 text-[10px] text-slate-600 pointer-events-none font-mono">
         v0.14 — Simulacras Novas · 55 thinkers · 8 axes · selectable
