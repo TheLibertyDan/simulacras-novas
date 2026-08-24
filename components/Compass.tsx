@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { Canvas } from "@react-three/fiber"
 import { OrbitControls, Html, Line, GizmoHelper, GizmoViewport } from "@react-three/drei"
 import * as THREE from "three"
@@ -140,6 +140,7 @@ function ThinkerPoint({
   onClick,
   clickable,
   highlighted,
+  isTouchDevice,
 }: {
   thinker: Thinker
   xAxis: AxisKey
@@ -150,12 +151,21 @@ function ThinkerPoint({
   clickable?: boolean
   /** True if this thinker is a signature/extreme voice on one of the currently-viewed axes. */
   highlighted?: boolean
+  isTouchDevice?: boolean
 }) {
   const [hovered, setHovered] = useState(false)
   const color = thinker.color ?? (highlighted ? "#c4b5fd" : "#93c5fd")
-  const baseSize = highlighted ? 0.36 : 0.28
-  const size = hovered ? baseSize * 1.3 : baseSize
-  const emissive = hovered ? 0.7 : highlighted ? 0.55 : 0.3
+  // Bigger baseline on touch so a fingertip actually hits the sphere.
+  const baseSize = isTouchDevice
+    ? highlighted
+      ? 0.5
+      : 0.42
+    : highlighted
+      ? 0.36
+      : 0.28
+  const size = hovered && !isTouchDevice ? baseSize * 1.3 : baseSize
+  const emissive =
+    hovered && !isTouchDevice ? 0.7 : highlighted ? 0.55 : 0.3
 
   const position: [number, number, number] = [
     thinker[xAxis],
@@ -168,11 +178,16 @@ function ThinkerPoint({
       <mesh
         onPointerOver={(e) => {
           e.stopPropagation()
+          // Skip the whole hover UX on touch — otherwise dragging the
+          // chart triggers spurious "hover" cards as your finger passes
+          // over spheres.
+          if (isTouchDevice || e.nativeEvent.pointerType === "touch") return
           setHovered(true)
           onHover(thinker)
           if (clickable) document.body.style.cursor = "pointer"
         }}
-        onPointerOut={() => {
+        onPointerOut={(e) => {
+          if (isTouchDevice || e.nativeEvent.pointerType === "touch") return
           setHovered(false)
           onHover(null)
           document.body.style.cursor = "default"
@@ -280,6 +295,16 @@ export default function Compass({
 }: CompassProps) {
   const [hovered, setHovered] = useState<Thinker | null>(null)
   const [axisInfoAxis, setAxisInfoAxis] = useState<AxisKey | null>(null)
+  const [isTouchDevice, setIsTouchDevice] = useState(false)
+
+  // Detect once on mount. `(pointer: coarse)` matches touch screens
+  // regardless of viewport width. Used to (a) suppress hover UX,
+  // (b) make spheres bigger so a finger can hit them.
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    setIsTouchDevice(window.matchMedia("(pointer: coarse)").matches)
+  }, [])
+
   const xDef = AXES[xAxis]
   const yDef = AXES[yAxis]
   const zDef = AXES[zAxis]
@@ -330,6 +355,7 @@ export default function Compass({
               clickable={clickable}
               onClick={clickable ? () => onProfileClick?.(t.name) : undefined}
               highlighted={highlightedNames.has(t.name)}
+              isTouchDevice={isTouchDevice}
             />
           )
         })}
@@ -354,7 +380,7 @@ export default function Compass({
         </GizmoHelper>
       </Canvas>
 
-      {hovered && (
+      {hovered && !isTouchDevice && (
         <div className="absolute bottom-6 right-6 max-w-sm bg-slate-900/95 border border-slate-700 rounded-lg p-4 shadow-xl backdrop-blur-sm pointer-events-none">
           <div className="flex items-baseline justify-between gap-3 mb-2">
             <div className="text-base font-bold text-slate-100">
