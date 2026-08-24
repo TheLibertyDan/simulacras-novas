@@ -8,6 +8,7 @@ import AxisPicker from "./AxisPicker"
 import Assessment from "./Assessment"
 import Results from "./Results"
 import ProfileCard from "./ProfileCard"
+import ShareButton from "./ShareButton"
 import type { AxisKey } from "@/data/axes"
 import type { UserScores } from "@/data/questions"
 import { thinkers } from "@/data/thinkers"
@@ -150,15 +151,20 @@ export default function CompassApp() {
           {userScores ? "Retake the compass →" : "Take the compass →"}
         </button>
         {userScores && (
-          <button
-            onClick={() => {
-              setMenuOpen(false)
-              setView("results")
-            }}
-            className="block mt-2 w-full text-xs px-3 py-2 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono cursor-pointer"
-          >
-            See your results
-          </button>
+          <>
+            <button
+              onClick={() => {
+                setMenuOpen(false)
+                setView("results")
+              }}
+              className="block mt-2 w-full text-xs px-3 py-2 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono cursor-pointer"
+            >
+              See your results
+            </button>
+            <div className="mt-2 [&>div]:w-full [&>div>button]:w-full [&>div>button]:justify-center">
+              <ShareButton scores={userScores} />
+            </div>
+          </>
         )}
       </div>
     </div>
