@@ -9,24 +9,29 @@ import { profiles, findProfile } from "@/data/profiles"
 import { composeDescriptor, shortLabel } from "@/data/descriptor"
 import ProfileCard, { Portrait } from "./ProfileCard"
 import AxisInfo from "./AxisInfo"
+import ShareButton from "./ShareButton"
 
 interface ResultsProps {
   scores: UserScores
+  /** True when the scores were loaded from a shared URL (?s=…), not from a live assessment. */
+  isShared?: boolean
   onBack: () => void
   onRetake: () => void
+  onTakeYours: () => void
   onOpenChart: (scores: UserScores) => void
 }
 
 export default function Results({
   scores,
+  isShared = false,
   onBack,
   onRetake,
+  onTakeYours,
   onOpenChart,
 }: ResultsProps) {
   const [openProfile, setOpenProfile] = useState<string | null>(null)
   const [openAxisInfo, setOpenAxisInfo] = useState<AxisKey | null>(null)
 
-  // Every thinker with a profile shows up in comparisons — all 55, unified.
   const profileNames = useMemo(() => new Set(profiles.map((p) => p.name)), [])
   const comparableThinkers = thinkers.filter((t) => profileNames.has(t.name))
 
@@ -58,24 +63,44 @@ export default function Results({
     temporal: t.temporal,
   })
 
+  const headerTitle = isShared
+    ? "A shared Simulacras Novas"
+    : "Your Simulacras Novas"
+  const headerSubtitle = isShared
+    ? "Someone shared their compass. Take yours to compare."
+    : "Where you land on eight philosophical axes — and who you think like."
+  const youAreLabel = isShared ? "They are" : "You are"
+  const yourScoresLabel = isShared
+    ? "Their scores across the 8 axes"
+    : "Your scores across the 8 axes"
+
   return (
-    <div className="fixed inset-0 bg-slate-950 text-slate-100 overflow-y-auto p-6 md:p-10">
+    <div className="fixed inset-0 bg-slate-950 text-slate-100 overflow-y-auto p-4 md:p-10">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <div className="flex items-baseline justify-between mb-8">
+        <div className="flex flex-col md:flex-row md:items-baseline md:justify-between gap-3 mb-6">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Your Simulacras Novas</h1>
-            <p className="text-sm text-slate-400 mt-1">
-              Where you land on eight philosophical axes — and who you think like.
-            </p>
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+              {headerTitle}
+            </h1>
+            <p className="text-sm text-slate-400 mt-1">{headerSubtitle}</p>
           </div>
           <div className="flex gap-2">
-            <button
-              onClick={onRetake}
-              className="text-xs px-3 py-1.5 rounded border border-slate-700 text-slate-300 hover:border-slate-500 cursor-pointer font-mono"
-            >
-              Retake
-            </button>
+            {isShared ? (
+              <button
+                onClick={onTakeYours}
+                className="text-xs px-4 py-2 rounded bg-pink-500 hover:bg-pink-400 text-white font-mono font-bold cursor-pointer"
+              >
+                Take yours →
+              </button>
+            ) : (
+              <button
+                onClick={onRetake}
+                className="text-xs px-3 py-1.5 rounded border border-slate-700 text-slate-300 hover:border-slate-500 cursor-pointer font-mono"
+              >
+                Retake
+              </button>
+            )}
             <button
               onClick={onBack}
               className="text-xs px-3 py-1.5 rounded border border-slate-700 text-slate-300 hover:border-slate-500 cursor-pointer font-mono"
@@ -86,11 +111,11 @@ export default function Results({
         </div>
 
         {/* Hyper-philosophical one-liner descriptor */}
-        <div className="bg-gradient-to-br from-slate-900/70 to-slate-900/30 border border-slate-800 rounded-xl p-6 mb-6">
+        <div className="bg-gradient-to-br from-slate-900/70 to-slate-900/30 border border-slate-800 rounded-xl p-5 md:p-6 mb-4 md:mb-6">
           <div className="text-[10px] uppercase tracking-widest text-slate-500 font-mono mb-3">
-            You are
+            {youAreLabel}
           </div>
-          <p className="text-lg md:text-xl text-slate-100 leading-snug font-medium">
+          <p className="text-base md:text-xl text-slate-100 leading-snug font-medium">
             {descriptor}
           </p>
           <div className="mt-3 text-xs font-mono text-slate-500">
@@ -98,8 +123,15 @@ export default function Results({
           </div>
         </div>
 
+        {/* Share button — prominent, right under descriptor */}
+        {!isShared && (
+          <div className="flex justify-center mb-6 md:mb-8">
+            <ShareButton scores={scores} />
+          </div>
+        )}
+
         {/* Nearest / farthest headline */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 md:mb-8">
           <div className="bg-slate-900/70 border border-emerald-800/40 rounded-xl p-5">
             <div className="text-[10px] uppercase tracking-widest text-emerald-400 font-mono mb-2">
               Closest to
@@ -140,10 +172,10 @@ export default function Results({
           </div>
         </div>
 
-        {/* Your scores */}
-        <div className="bg-slate-900/70 border border-slate-800 rounded-xl p-6 mb-8">
+        {/* Scores */}
+        <div className="bg-slate-900/70 border border-slate-800 rounded-xl p-4 md:p-6 mb-6 md:mb-8">
           <h2 className="text-sm uppercase tracking-widest text-slate-500 font-mono mb-4">
-            Your scores across the 8 axes
+            {yourScoresLabel}
           </h2>
           <div className="space-y-3">
             {AXIS_ORDER.map((axisKey) => {
@@ -151,14 +183,14 @@ export default function Results({
               const score = scores[axisKey]
               const pct = ((score + 10) / 20) * 100
               return (
-                <div key={axisKey} className="flex items-center gap-3">
+                <div key={axisKey} className="flex items-center gap-2 md:gap-3">
                   <button
                     onClick={() => setOpenAxisInfo(axisKey)}
-                    className="w-36 flex-shrink-0 text-left cursor-pointer group"
+                    className="w-24 md:w-36 flex-shrink-0 text-left cursor-pointer group"
                     title={`What is ${axis.name}?`}
                   >
                     <div
-                      className="text-xs font-semibold group-hover:underline decoration-dotted underline-offset-2"
+                      className="text-[11px] md:text-xs font-semibold group-hover:underline decoration-dotted underline-offset-2 leading-tight"
                       style={{ color: axis.color }}
                     >
                       {axis.name}
@@ -181,7 +213,7 @@ export default function Results({
                       }}
                     />
                   </div>
-                  <div className="w-16 text-right text-xs font-mono text-slate-400 flex-shrink-0">
+                  <div className="w-10 md:w-16 text-right text-xs font-mono text-slate-400 flex-shrink-0">
                     {score > 0 ? "+" : ""}{score}
                   </div>
                 </div>
@@ -189,18 +221,18 @@ export default function Results({
             })}
           </div>
           <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-[10px] font-mono text-slate-600">
-            <span>← negative pole</span>
-            <span>neutral (0)</span>
-            <span>positive pole →</span>
+            <span>← negative</span>
+            <span>neutral</span>
+            <span>positive →</span>
           </div>
         </div>
 
-        {/* All 9 subjects — click to open profile */}
-        <div className="bg-slate-900/70 border border-slate-800 rounded-xl p-6 mb-8">
+        {/* All profiles */}
+        <div className="bg-slate-900/70 border border-slate-800 rounded-xl p-4 md:p-6 mb-6 md:mb-8">
           <h2 className="text-sm uppercase tracking-widest text-slate-500 font-mono mb-4">
             Compare to — click any face for the full profile
           </h2>
-          <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-3">
+          <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-9 gap-2 md:gap-3">
             {profiles.map((profile) => {
               const t = thinkers.find((x) => x.name === profile.name)
               const d = t ? distance(scores, asScores(t)) : 0
@@ -208,7 +240,7 @@ export default function Results({
                 <button
                   key={profile.name}
                   onClick={() => setOpenProfile(profile.name)}
-                  className="flex flex-col items-center gap-1.5 p-2 rounded-lg hover:bg-slate-800/60 transition-colors cursor-pointer group"
+                  className="flex flex-col items-center gap-1.5 p-1.5 md:p-2 rounded-lg hover:bg-slate-800/60 transition-colors cursor-pointer group"
                 >
                   <Portrait
                     src={profile.image}
@@ -228,14 +260,23 @@ export default function Results({
           </div>
         </div>
 
-        {/* CTA — see yourself on the chart */}
-        <div className="text-center">
+        {/* CTAs — see chart + share again if not shared */}
+        <div className="flex flex-col md:flex-row gap-3 items-center justify-center">
           <button
             onClick={() => onOpenChart(scores)}
-            className="inline-block text-sm px-6 py-3 rounded-lg bg-slate-100 text-slate-900 hover:bg-white font-mono font-semibold cursor-pointer transition-colors shadow-lg"
+            className="w-full md:w-auto text-sm px-6 py-3 rounded-lg bg-slate-100 text-slate-900 hover:bg-white font-mono font-semibold cursor-pointer transition-colors shadow-lg"
           >
             See yourself on the 3D chart →
           </button>
+          {isShared && (
+            <button
+              onClick={onTakeYours}
+              className="w-full md:w-auto text-sm px-6 py-3 rounded-lg bg-pink-500 hover:bg-pink-400 text-white font-mono font-bold cursor-pointer shadow-xl"
+            >
+              Take yours →
+            </button>
+          )}
+          {!isShared && <ShareButton scores={scores} />}
         </div>
       </div>
 

@@ -33,12 +33,12 @@ export default function Assessment({ onComplete, onCancel }: AssessmentProps) {
   const canFinish = answered === totalQs
 
   return (
-    <div className="fixed inset-0 bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-6">
+    <div className="fixed inset-0 bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-4 md:p-6 overflow-y-auto">
       <div className="w-full max-w-2xl">
         {/* Header + progress */}
-        <div className="mb-8">
+        <div className="mb-6 md:mb-8">
           <div className="flex items-baseline justify-between mb-3">
-            <h2 className="text-lg font-bold tracking-tight">
+            <h2 className="text-base md:text-lg font-bold tracking-tight">
               Simulacras Novas
             </h2>
             <div className="text-xs font-mono text-slate-500">
@@ -54,22 +54,22 @@ export default function Assessment({ onComplete, onCancel }: AssessmentProps) {
         </div>
 
         {/* Statement */}
-        <div className="bg-slate-900/70 border border-slate-800 rounded-xl p-8 mb-6 shadow-xl">
-          <div className="text-[10px] uppercase tracking-widest text-slate-500 font-mono mb-4">
+        <div className="bg-slate-900/70 border border-slate-800 rounded-xl p-5 md:p-8 mb-4 md:mb-6 shadow-xl">
+          <div className="text-[10px] uppercase tracking-widest text-slate-500 font-mono mb-3 md:mb-4">
             To what extent do you agree with this statement?
           </div>
-          <p className="text-xl text-slate-100 leading-relaxed">{current.text}</p>
+          <p className="text-lg md:text-xl text-slate-100 leading-relaxed">{current.text}</p>
         </div>
 
-        {/* Likert scale */}
-        <div className="grid grid-cols-5 gap-2 mb-8">
+        {/* Likert scale — stacked on mobile, 5-col on desktop */}
+        <div className="flex flex-col gap-2 md:grid md:grid-cols-5 mb-6 md:mb-8">
           {LIKERT_OPTIONS.map((opt) => {
             const selected = answers[current.id] === opt.value
             return (
               <button
                 key={opt.value}
                 onClick={() => selectAnswer(opt.value)}
-                className={`p-3 rounded-lg border text-xs font-medium transition-all cursor-pointer text-center leading-tight ${
+                className={`px-4 py-3 md:p-3 rounded-lg border text-sm md:text-xs font-medium transition-all cursor-pointer text-left md:text-center leading-tight ${
                   selected
                     ? "bg-slate-100 text-slate-900 border-slate-100 shadow-md"
                     : "bg-slate-900 text-slate-300 border-slate-700 hover:border-slate-500 hover:text-slate-100"
