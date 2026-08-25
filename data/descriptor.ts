@@ -20,7 +20,10 @@ function bandOf(score: number): Band {
 
 const DESCRIPTORS: Record<AxisKey, Record<Band, string>> = {
   epistemology: {
-    strongPos: "objectivist",
+    // "objectivist" was philosophically accurate but read as Ayn Rand's
+    // capital-O Objectivism (the whole ideological package). "rationalist"
+    // captures "truth is knowable through reason" without the ideology.
+    strongPos: "rationalist",
     mildPos: "empirical",
     neutral: "epistemically-mixed",
     mildNeg: "pragmatist",
