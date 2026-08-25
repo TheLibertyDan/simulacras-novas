@@ -7,6 +7,7 @@ import type { UserScores } from "@/data/questions"
 import { distance } from "@/data/questions"
 import { decodeScores } from "@/data/share"
 import { composeDescriptor, shortLabel } from "@/data/descriptor"
+import AxisInfo from "./AxisInfo"
 
 interface CompareModalProps {
   yourScores: UserScores
@@ -18,6 +19,7 @@ export default function CompareModal({ yourScores, onClose }: CompareModalProps)
   const [friendScores, setFriendScores] = useState<UserScores | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
+  const [openAxisInfo, setOpenAxisInfo] = useState<AxisKey | null>(null)
 
   useEffect(() => {
     setMounted(true)
@@ -55,16 +57,16 @@ export default function CompareModal({ yourScores, onClose }: CompareModalProps)
 
   const modal = (
     <div
-      className="fixed inset-0 flex items-center justify-center bg-slate-950/85 backdrop-blur-sm p-4 overflow-y-auto"
+      className="fixed inset-0 flex items-center justify-center bg-slate-950/85 backdrop-blur-sm p-4"
       style={{ zIndex: 2147483647 }}
       onClick={onClose}
     >
       <div
-        className="bg-slate-900 border border-slate-700 rounded-xl shadow-2xl max-w-2xl w-full my-8"
+        className="bg-slate-900 border border-slate-700 rounded-xl shadow-2xl max-w-2xl w-full max-h-[92vh] flex flex-col overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="flex items-start gap-3 p-5 md:p-6 border-b border-slate-800">
+        {/* Sticky header — always visible so × is reachable at any scroll position */}
+        <div className="flex items-start gap-3 p-5 md:p-6 border-b border-slate-800 flex-shrink-0 bg-slate-900">
           <div className="flex-1 min-w-0">
             <h2 className="text-xl md:text-2xl font-bold text-slate-100">
               Compare to a friend
@@ -81,29 +83,38 @@ export default function CompareModal({ yourScores, onClose }: CompareModalProps)
               e.stopPropagation()
               onClose()
             }}
-            className="text-slate-400 hover:text-white text-3xl leading-none flex-shrink-0 cursor-pointer -mt-1 -mr-1 w-8 h-8 flex items-center justify-center rounded hover:bg-slate-800"
-            aria-label="Close"
+            className="text-slate-400 hover:text-white text-3xl leading-none flex-shrink-0 cursor-pointer -mt-1 -mr-1 w-9 h-9 flex items-center justify-center rounded hover:bg-slate-800"
+            aria-label="Close and go back to your results"
+            title="Close and go back to your results"
           >
             ×
           </button>
         </div>
 
-        {/* Body */}
-        {!friendScores ? (
-          <InputForm
-            input={input}
-            setInput={setInput}
-            error={error}
-            onCompare={handleCompare}
-          />
-        ) : (
-          <ComparisonView
-            yourScores={yourScores}
-            friendScores={friendScores}
-            onReset={reset}
-          />
-        )}
+        {/* Scrolling body */}
+        <div className="overflow-y-auto flex-1">
+          {!friendScores ? (
+            <InputForm
+              input={input}
+              setInput={setInput}
+              error={error}
+              onCompare={handleCompare}
+            />
+          ) : (
+            <ComparisonView
+              yourScores={yourScores}
+              friendScores={friendScores}
+              onReset={reset}
+              onOpenAxisInfo={setOpenAxisInfo}
+            />
+          )}
+        </div>
       </div>
+
+      {/* Axis info modal opens on top of Compare */}
+      {openAxisInfo && (
+        <AxisInfo axis={openAxisInfo} onClose={() => setOpenAxisInfo(null)} />
+      )}
     </div>
   )
 
@@ -159,10 +170,12 @@ function ComparisonView({
   yourScores,
   friendScores,
   onReset,
+  onOpenAxisInfo,
 }: {
   yourScores: UserScores
   friendScores: UserScores
   onReset: () => void
+  onOpenAxisInfo: (axis: AxisKey) => void
 }) {
   const d = distance(yourScores, friendScores)
   const yourLabel = shortLabel(yourScores)
@@ -237,12 +250,24 @@ function ComparisonView({
             const friendPct = ((friend + 10) / 20) * 100
             return (
               <div key={key} className="flex items-center gap-2 md:gap-3">
-                <div
-                  className="w-20 md:w-28 flex-shrink-0 text-[10px] md:text-xs font-semibold leading-tight"
-                  style={{ color: axis.color }}
+                <button
+                  onClick={() => onOpenAxisInfo(key)}
+                  className="w-20 md:w-28 flex-shrink-0 text-left cursor-pointer group"
+                  title={`What is ${axis.name}?`}
                 >
-                  {axis.name}
-                </div>
+                  <span
+                    className="text-[10px] md:text-xs font-semibold leading-tight group-hover:underline decoration-dotted underline-offset-2 inline-flex items-center gap-1"
+                    style={{ color: axis.color }}
+                  >
+                    {axis.name}
+                    <span
+                      className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full border border-current text-[8px] opacity-60 group-hover:opacity-100"
+                      aria-hidden
+                    >
+                      ⓘ
+                    </span>
+                  </span>
+                </button>
                 <div className="flex-1 relative h-4 bg-slate-800 rounded-full">
                   <div
                     className="absolute top-1/2 -translate-y-1/2 h-full w-px bg-slate-600"
@@ -301,12 +326,19 @@ function ComparisonView({
           <div className="text-[10px] uppercase tracking-widest text-rose-400 font-mono mb-1">
             Biggest disagreement
           </div>
-          <div
-            className="text-sm font-semibold"
+          <button
+            onClick={() => onOpenAxisInfo(biggestGap.key)}
+            className="text-sm font-semibold inline-flex items-center gap-1 hover:underline decoration-dotted underline-offset-2 cursor-pointer"
             style={{ color: AXES[biggestGap.key].color }}
           >
             {AXES[biggestGap.key].name}
-          </div>
+            <span
+              className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full border border-current text-[8px] opacity-60"
+              aria-hidden
+            >
+              ⓘ
+            </span>
+          </button>
           <div className="text-xs text-slate-400 mt-1 font-mono">
             you {biggestGap.you > 0 ? "+" : ""}
             {biggestGap.you} · friend {biggestGap.friend > 0 ? "+" : ""}
@@ -317,12 +349,19 @@ function ComparisonView({
           <div className="text-[10px] uppercase tracking-widest text-emerald-400 font-mono mb-1">
             Biggest agreement
           </div>
-          <div
-            className="text-sm font-semibold"
+          <button
+            onClick={() => onOpenAxisInfo(biggestAlign.key)}
+            className="text-sm font-semibold inline-flex items-center gap-1 hover:underline decoration-dotted underline-offset-2 cursor-pointer"
             style={{ color: AXES[biggestAlign.key].color }}
           >
             {AXES[biggestAlign.key].name}
-          </div>
+            <span
+              className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full border border-current text-[8px] opacity-60"
+              aria-hidden
+            >
+              ⓘ
+            </span>
+          </button>
           <div className="text-xs text-slate-400 mt-1 font-mono">
             you {biggestAlign.you > 0 ? "+" : ""}
             {biggestAlign.you} · friend {biggestAlign.friend > 0 ? "+" : ""}
