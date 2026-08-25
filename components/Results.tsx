@@ -33,6 +33,10 @@ export default function Results({
   const [openProfile, setOpenProfile] = useState<string | null>(null)
   const [openAxisInfo, setOpenAxisInfo] = useState<AxisKey | null>(null)
   const [openCompare, setOpenCompare] = useState(false)
+  // "This is my result" on shared view → treat these scores as the
+  // viewer's own (unlocks Share + Compare, changes copy).
+  const [claimedAsMine, setClaimedAsMine] = useState(false)
+  const effectiveIsShared = isShared && !claimedAsMine
 
   const profileNames = useMemo(() => new Set(profiles.map((p) => p.name)), [])
   const comparableThinkers = thinkers.filter((t) => profileNames.has(t.name))
@@ -65,14 +69,14 @@ export default function Results({
     temporal: t.temporal,
   })
 
-  const headerTitle = isShared
+  const headerTitle = effectiveIsShared
     ? "A shared Simulacras Novas"
     : "Your Simulacras Novas"
-  const headerSubtitle = isShared
-    ? "Someone shared their compass. Take yours to compare."
+  const headerSubtitle = effectiveIsShared
+    ? "Someone shared their compass. Take yours to compare — or, if these are your own scores, click 'This is my result' to unlock Share and Compare."
     : "Where you land on eight philosophical axes — and who you think like."
-  const youAreLabel = isShared ? "They are" : "You are"
-  const yourScoresLabel = isShared
+  const youAreLabel = effectiveIsShared ? "They are" : "You are"
+  const yourScoresLabel = effectiveIsShared
     ? "Their scores across the 8 axes"
     : "Your scores across the 8 axes"
 
@@ -87,14 +91,23 @@ export default function Results({
             </h1>
             <p className="text-sm text-slate-400 mt-1">{headerSubtitle}</p>
           </div>
-          <div className="flex gap-2">
-            {isShared ? (
-              <button
-                onClick={onTakeYours}
-                className="text-xs px-4 py-2 rounded bg-pink-500 hover:bg-pink-400 text-white font-mono font-bold cursor-pointer"
-              >
-                Take yours →
-              </button>
+          <div className="flex flex-wrap gap-2">
+            {effectiveIsShared ? (
+              <>
+                <button
+                  onClick={() => setClaimedAsMine(true)}
+                  className="text-xs px-4 py-2 rounded border border-yellow-500/60 text-yellow-300 hover:bg-yellow-500/10 cursor-pointer font-mono"
+                  title="Treat these scores as your own — unlocks Share and Compare"
+                >
+                  This is my result
+                </button>
+                <button
+                  onClick={onTakeYours}
+                  className="text-xs px-4 py-2 rounded bg-pink-500 hover:bg-pink-400 text-white font-mono font-bold cursor-pointer"
+                >
+                  Take yours →
+                </button>
+              </>
             ) : (
               <button
                 onClick={onRetake}
@@ -126,7 +139,7 @@ export default function Results({
         </div>
 
         {/* Share + Compare — prominent, right under descriptor */}
-        {!isShared && (
+        {!effectiveIsShared && (
           <div className="flex flex-col md:flex-row items-stretch md:items-center justify-center gap-3 mb-6 md:mb-8">
             <ShareButton scores={scores} />
             <button
@@ -294,7 +307,7 @@ export default function Results({
           >
             See yourself on the 3D chart →
           </button>
-          {isShared && (
+          {effectiveIsShared && (
             <button
               onClick={onTakeYours}
               className="w-full md:w-auto text-sm px-6 py-3 rounded-lg bg-pink-500 hover:bg-pink-400 text-white font-mono font-bold cursor-pointer shadow-xl"
@@ -302,7 +315,7 @@ export default function Results({
               Take yours →
             </button>
           )}
-          {!isShared && <ShareButton scores={scores} />}
+          {!effectiveIsShared && <ShareButton scores={scores} />}
         </div>
       </div>
 
