@@ -706,6 +706,43 @@ export const profiles: Profile[] = [
     ],
   },
   {
+    name: "Ned Ryun",
+    fullName: "Nathaniel \"Ned\" Ryun",
+    lifespan: "b. c. 1972 (Founder/CEO, American Majority; author, ***American Leviathan***)",
+    wiki: "https://en.wikipedia.org/wiki/Ned_Ryun",
+    axisNotes: {
+      epistemology:
+        "Objectivist about constitutional and historical truths — ***American Leviathan*** treats the Founders' design as knowable political science; ***Thread of Liberty*** frames the American founding as the culmination of a knowable Western tradition.",
+      anthropology:
+        "Skeptical without total pessimism — unelected bureaucrats predate when unchecked, but ordinary citizens are basically capable when given the tools; the Leviathan metaphor is anthropological as much as political.",
+      politicalOntology:
+        "Extreme realist — \"policy without power is worthless.\" The signature attack on \"Conservatism, Inc.\" is that it produces think-tank chatter instead of political victories.",
+      universalism:
+        "America-first constitutional restorationist — the mission is restoring *this* Republic, not building abstract universal justice. The ***Thread of Liberty*** tagline is \"Keeping Our Republic.\"",
+      individualism:
+        "Founders' natural-rights individualism against the collectivism of the administrative state — but organized in a trained movement, not atomized libertarianism.",
+      order:
+        "Devolve and break apart the centralized administrative Leviathan; power belongs at the local and state level where organic accountability lives. Constitutional foundations designed; everything above them emergent.",
+      authority:
+        "Cadre-training theory — ***American Majority*** trains an organized minority (candidates, activists) because the disorganized many can't beat Leviathan alone. Machiavellian and Hyde-adjacent on this axis.",
+      temporal:
+        "Strongly declinist — Progressive-era statists at the turn of the 20th century subverted the Founders' Republic; the task is restoration, not further \"progress.\" ***Restoring Our Republic*** is the title as thesis.",
+    },
+    influences: [
+      "The American Founders — Madison, Hamilton, Jefferson, ***The Federalist Papers***",
+      "Alexis de Tocqueville — ***Democracy in America*** as the framing device of ***Thread of Liberty***",
+      "Thomas Hobbes — ***Leviathan*** imagery inverted (Hobbes's monster used against Hobbes's own conclusion)",
+      "Michael Farris / HSLDA — through Ned's early directorship of Generation Joshua (2004–2007)",
+      "Larry Arnn + the Claremont / Hillsdale intellectual world — via the 1776 Commission",
+    ],
+    dissents: [
+      "\"Conservatism, Inc.\" — think-tanks that produce ideas without operational political power",
+      "The Progressive-era administrative state (Wilson, Croly, Dewey) — the villain of ***American Leviathan***",
+      "Establishment Republican consultant class — \"Republicans need to find a backbone\"",
+      "Libertarian purity-vote strategy — respects Rand Paul / Thomas Massie's principles but rejects their theory of change",
+    ],
+  },
+  {
     name: "Hillary Clinton",
     fullName: "Hillary Rodham Clinton",
     lifespan: "b. 1947 (former Secretary of State, Senator, First Lady)",
