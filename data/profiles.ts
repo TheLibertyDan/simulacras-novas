@@ -708,7 +708,7 @@ export const profiles: Profile[] = [
   {
     name: "Ned Ryun",
     fullName: "Nathaniel \"Ned\" Ryun",
-    lifespan: "b. c. 1972 (Founder/CEO, American Majority; author, ***American Leviathan***)",
+    lifespan: "b. 1973 (Founder/CEO, American Majority; author, ***American Leviathan***)",
     wiki: "https://en.wikipedia.org/wiki/Ned_Ryun",
     axisNotes: {
       epistemology:
